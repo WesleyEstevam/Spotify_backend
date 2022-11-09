@@ -57,18 +57,20 @@ server.post('/usuarios', (req, res) => {
 })
 
 //========================== Login =========================== INCOMPLETA
-server.get('/usuarios?email=', (req, res) => {
-    let email = req.query['email'];
-    if (email ) {
-        
+server.get('/usuario', (req, res) => {
+    let queryEmail = req.query['email'];
+    let { email } = req.body;
+
+    if ( queryEmail == usuarios.email ) {
+        let user = usuarios[email];
+        res.json(user);
     } else {
-        
+        res.send("<h1>Nada foi encontrado!</h1 >")
     }
-    let usuarios = usuarios[email];
-    res.json(usuarios);
+
 });
 
-//========================== Listagem de usuários =========================== 
+//========================== Listagem de usuários =========================== OK
 
 server.get('/usuarios', (req, res) => {
     try {
@@ -106,7 +108,7 @@ server.post('/musicas', (req, res) => {
 
 //VERIFICAÇÃO DO SERVIDOR
 server.listen(port, () => {
-    console.log('Servidor rorando na porta: ' + port);
+    console.log('Servidor rodando na porta: ' + port);
 })
 
 module.exports = server;
