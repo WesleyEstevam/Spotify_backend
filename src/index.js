@@ -101,8 +101,17 @@ server.put('/usuarios/:id', (req, res) => {
 
 //========================== Buscar músicas ===========================
 
-server.post('/musicas', (req, res) => {
-    
+server.get('/musicas', (req, res) => {
+    let pesquisa = req.query['nome_like'];
+    let musicas = playlists;
+
+    let busca = musicas.filter((music) => {
+        return music.nomeMusica === pesquisa;
+    })
+
+    res.json(busca);
+    console.log(busca)
+
 })
 
 //VERIFICAÇÃO DO SERVIDOR
