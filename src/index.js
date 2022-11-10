@@ -56,17 +56,16 @@ server.post('/usuarios', (req, res) => {
 
 })
 
-//========================== Login =========================== INCOMPLETA
+//========================== Login =========================== OK
 server.get('/usuario', (req, res) => {
     let queryEmail = req.query['email'];
-    let { email } = req.body;
+    let u = usuarios //RETORNA O ARRAY DE USUÁRIOS
 
-    if ( queryEmail == usuarios.email ) {
-        let user = usuarios[email];
-        res.json(user);
-    } else {
-        res.send("<h1>Nada foi encontrado!</h1 >")
-    }
+    let objeto = u.find((user) => {
+        return user.email === queryEmail;    
+    })
+
+    res.json(objeto);
 
 });
 
