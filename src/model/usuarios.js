@@ -1,23 +1,22 @@
+const { mongoose } = require("mongoose");
 
-let usuarios = [
-    {
-      email: "soter@gmail.com",
-      nome: "soter",
-      senha: "1234",
-      id: 2
-    },
-    {
-      email: "wesley@hotmail.com",
-      nome: "wesley",
-      senha: "12345",
-      id: 1
-    },
-    {
-      email: "gean@gmail.com",
-      nome: "gean",
-      senha: "123",
-      id: 3
-    }
-  ]
+const Usuario = mongoose.Schema({
+  nome: {
+    type: String,
+    require: true
+  },
+  email: {
+    type: String,
+    require: true
+  },
+  senha: {
+    type: String,
+    require: true
+  }
+})
 
-  module.exports = usuarios;
+//Aqui estamos informando qual a collection onde os dados serão armazenados. collection == tabela
+
+
+
+module.exports = mongoose.model('usuario', Usuario);

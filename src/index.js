@@ -1,17 +1,17 @@
 const express = require('express'); 
 const server = express();
 const port = 3000;
-const usuarios = require('./model/usuarios');
-const playlists = require('./model/playlists');
-const bodyParser = require('body-parser');
+const usuario = require('./model/usuarios');
+
+const db = require('./conexaoDB/conect');
+const usuarios = require('./model/usuarios')
 
 //CONFIGURAÇÕES DO SERVIDOR
-server.use(bodyParser.urlencoded({extended: false}));
-server.use(bodyParser.json()); //convertendo tudo que vem com JSON
+
 server.use(express.json());
 
 //ROTAS DISPONÍVEIS
-//========================== Listagem da playlists =========================== OK
+//========================== Listagem da playlists =========================== 
 server.get('/playlists', (req, res) => {
     try {
         res.json(playlists);
@@ -21,7 +21,7 @@ server.get('/playlists', (req, res) => {
     } 
 });
 
-//========================== Detalhe da playlists com id =========================== OK
+//========================== Detalhe da playlists com id =========================== 
 server.get('/playlists/:id', (req, res) => {
     let id = req.params.id;
     let playlist = {};
@@ -29,7 +29,7 @@ server.get('/playlists/:id', (req, res) => {
     res.json(playlist);
 })
 
-//========================== Cadastrar playlist =========================== OK
+//========================== Cadastrar playlist =========================== 
 
 server.post('/playlists', (req, res) => {
     let { id, titulo, nomeMusica, artista } = req.body;
@@ -46,17 +46,22 @@ server.put('/playlists', (req, res) => {
 //========================== Cadastro de usuários =========================== OK
 
 server.post('/usuarios', (req, res) => {
-    try{
-        let { email, nome, senha, id } = req.body;
-        usuarios.push( { email, nome, senha, id } );
-        res.json(usuarios);
-    }catch(error) {
-        console.log(error)
-    }
 
+    let { email, nome, senha } = req.body;
+    new usuario({
+        email: email,
+        nome: nome,
+        senha: senha
+    }).save().then(() => {
+        console.log("Usuário cadastrado com sucesso!!")
+    }).catch((err) => {
+        console.log("Houve um erro ao registrar um usuário: " + err)
+    })
+
+    res.json(usuario)
 })
 
-//========================== Login =========================== OK
+//========================== Login =========================== 
 server.get('/usuario', (req, res) => {
     let queryEmail = req.query['email'];
     let u = usuarios //RETORNA O ARRAY DE USUÁRIOS
@@ -69,18 +74,19 @@ server.get('/usuario', (req, res) => {
 
 });
 
-//========================== Listagem de usuários =========================== OK
+//========================== Listagem de usuários =========================== 
 
 server.get('/usuarios', (req, res) => {
     try {
-        res.json(usuarios);
+        let listaUsuarios = usuario.find(); 
+        res.json(listaUsuarios);
 
     }catch (error){
         res.json(error);
     } 
 });
 
-//========================== Editar usuário =========================== OK
+//========================== Editar usuário =========================== 
 
 server.put('/usuarios/:id', (req, res) => {
     let id = req.params.id;
@@ -116,7 +122,7 @@ server.get('/musicas', (req, res) => {
 
 //VERIFICAÇÃO DO SERVIDOR
 server.listen(port, () => {
-    console.log('Servidor rodando na porta: ' + port);
+    console.log('Servidor node rodando na porta: ' + port);
 })
 
 module.exports = server;
