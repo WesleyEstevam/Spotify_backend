@@ -1,6 +1,6 @@
-const { mongoose } = require("mongoose");
+//const conn = require('../conexaoDB/conect');
 
-const Usuario = mongoose.Schema({
+const Usuario = {
   nome: {
     type: String,
     require: true
@@ -13,10 +13,6 @@ const Usuario = mongoose.Schema({
     type: String,
     require: true
   }
-})
+};
 
-//Aqui estamos informando qual a collection onde os dados serão armazenados. collection == tabela
-
-
-
-module.exports = mongoose.model('usuario', Usuario);
+module.exports = Usuario;

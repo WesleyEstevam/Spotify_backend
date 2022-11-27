@@ -1,32 +1,34 @@
 const express = require('express'); 
 const server = express();
 const port = 3000;
-const usuario = require('./model/usuarios');
 
-const db = require('./conexaoDB/conect');
-const usuarios = require('./model/usuarios')
+const usuario = require('./model/usuarios');
+const { connect } = require('./conexaoDB/conect');
 
 //CONFIGURAÇÕES DO SERVIDOR
-
 server.use(express.json());
 
 //ROTAS DISPONÍVEIS
-//========================== Listagem da playlists =========================== 
-server.get('/playlists', (req, res) => {
-    try {
-        res.json(playlists);
+//========================== Listagem da playlists =========================== OK
+server.get('/playlists', async (req, res) => {
 
-    }catch (error){
-        res.json(error);
-    } 
+    const conn  = await connect();
+    const [row] = await conn.query('SELECT * FROM playlist;');
+
+    res.json(row);
+
 });
 
-//========================== Detalhe da playlists com id =========================== 
-server.get('/playlists/:id', (req, res) => {
+//========================== Detalhe da playlists com id =========================== INCOMPLETO
+server.get('/playlists/:id', async (req, res) => {
     let id = req.params.id;
-    let playlist = {};
-    playlist = playlists[id];
-    res.json(playlist);
+    
+    const conn  = await connect();
+    const value = id;
+    const [row] = await conn.query(`SELECT * FROM playlist WHERE id=${value};`);
+
+    res.json(row, value);
+
 })
 
 //========================== Cadastrar playlist =========================== 
@@ -105,18 +107,20 @@ server.put('/usuarios/:id', (req, res) => {
 })
 
 
-//========================== Buscar músicas ===========================
+//========================== Buscar músicas =========================== INCOMPLETO
 
-server.get('/musicas', (req, res) => {
-    let pesquisa = req.query['nome_like'];
-    let musicas = playlists;
-
-    let busca = musicas.filter((music) => {
-        return music.nomeMusica === pesquisa;
+server.get('/musicas', async (req, res) => {
+    
+    let pesquisa = req.query['nome'];
+    
+    const conn  = await connect(); //CONEXÃO COM O MYSQL
+    const row = await conn.query('SELECT * FROM musicas;');
+    
+    let busca = row.filter((rows) => {
+        return rows.nomeMusica === pesquisa;
     })
 
     res.json(busca);
-    console.log(busca)
 
 })
 
