@@ -1,8 +1,7 @@
 const express = require('express'); 
 const server = express();
-const port = 3000;
+const port = 3001;
 
-const usuario = require('./model/usuarios');
 const { connect } = require('./conexaoDB/conect');
 
 //CONFIGURAÇÕES DO SERVIDOR
@@ -19,35 +18,48 @@ server.get('/playlists', async (req, res) => {
 
 });
 
-//========================== Detalhe da playlists com id =========================== INCOMPLETO
+//========================== Detalhe da playlists com id =========================== OK
 server.get('/playlists/:id', async (req, res) => {
     let id = req.params.id;
-    
+
     const conn  = await connect();
-    const value = id;
-    const [row] = await conn.query(`SELECT * FROM playlist WHERE id=${value};`);
+    const [row] = await conn.query(`SELECT * FROM playlist WHERE id_playlist=${id};`);
 
-    res.json(row, value);
+    res.json(row);
 
 })
 
-//========================== Cadastrar playlist =========================== 
+//========================== Cadastrar playlist =========================== OK
 
-server.post('/playlists', (req, res) => {
-    let { id, titulo, nomeMusica, artista } = req.body;
-    let novaPlaylist = playlists.push({ id, titulo, nomeMusica, artista });
-    res.json(novaPlaylist);
+server.post('/playlists', async (req, res) => {
+    let { titulo, artista, fk_musicas } = req.body;
+
+    const conn = await connect();
+
+    const [row] = await conn.query(`
+    INSERT INTO playlist ( titulo, artista, fk_musicas ) 
+    VALUE ( '${titulo}', '${artista}', ${fk_musicas} );`)
+
+    res.json(row)
 })
 
-//========================== Editar playlist ===========================
+//========================== Editar playlist =========================== OK
 
-server.put('/playlists', (req, res) => {
-    
+server.put('/playlists/:id_playlist', async (req, res) => {
+    let { titulo, artista, fk_musicas } = req.body;
+    let id_playlist = req.params.id_playlist;
+
+    const conn = await connect();
+    const [row] = await conn.query(`
+    UPDATE playlist SET titulo='${titulo}', artista='${artista}', fk_musicas='${fk_musicas}' 
+    WHERE id_playlist = ${id_playlist};`)
+
+    res.json(row);
 })
 
 //========================== Cadastro de usuários =========================== OK
 
-server.post('/usuarios', (req, res) => {
+server.post('/usuarios', async (req, res) => {
 
     let { email, nome, senha } = req.body;
     new usuario({
@@ -63,64 +75,56 @@ server.post('/usuarios', (req, res) => {
     res.json(usuario)
 })
 
-//========================== Login =========================== 
-server.get('/usuario', (req, res) => {
+//========================== Login =========================== incompleta
+server.get('/usuario', async (req, res) => {
     let queryEmail = req.query['email'];
-    let u = usuarios //RETORNA O ARRAY DE USUÁRIOS
 
-    let objeto = u.find((user) => {
-        return user.email === queryEmail;    
-    })
+    const conn  = await connect();
+    const [row] = await conn.query(`SELECT * FROM usuario WHERE email='${queryEmail}';`);
 
-    res.json(objeto);
+    res.json(row);
 
 });
 
-//========================== Listagem de usuários =========================== 
+//========================== Listagem de usuários =========================== OK
 
-server.get('/usuarios', (req, res) => {
-    try {
-        let listaUsuarios = usuario.find(); 
-        res.json(listaUsuarios);
+server.get('/usuarios', async (req, res) => {
+    let conn  = await connect();
+    let [row] = await conn.query('SELECT * FROM usuario;');
 
-    }catch (error){
-        res.json(error);
-    } 
+    res.json(row);
+
 });
 
-//========================== Editar usuário =========================== 
+//========================== Editar usuário =========================== OK
 
-server.put('/usuarios/:id', (req, res) => {
-    let id = req.params.id;
-    let { email, nome, senha } = req.body
-    let novoUsuario = usuarios.find( user => user.id == id );
+server.put('/usuarios/:id_usuario', async (req, res) => {
+    let id_usuario = req.params.id_usuario;
+    let { nome, email, senha } = req.body
 
-    if( novoUsuario ) {
-        novoUsuario.email = email;
-        novoUsuario.nome  = nome;
-        novoUsuario.senha = senha;
-        
-        res.json(novoUsuario);
+    if( id_usuario ) {
+        const conn  = await connect();
+        const [row] = await conn.query(`
+        UPDATE usuario SET nome='${nome}', email='${email}', senha='${senha}' 
+        WHERE id_usuario = ${id_usuario};`)
+
+        res.json(row)
     }else {
         res.json({ error: 'Usuário não encontrado!' });
     }
 })
 
 
-//========================== Buscar músicas =========================== INCOMPLETO
+//========================== Buscar músicas =========================== OK
 
 server.get('/musicas', async (req, res) => {
     
     let pesquisa = req.query['nome'];
     
-    const conn  = await connect(); //CONEXÃO COM O MYSQL
-    const row = await conn.query('SELECT * FROM musicas;');
-    
-    let busca = row.filter((rows) => {
-        return rows.nomeMusica === pesquisa;
-    })
+    const conn = await connect(); //CONEXÃO COM O MYSQL
+    const [row]  = await conn.query(`SELECT * FROM musicas WHERE nome='${pesquisa}';`);
 
-    res.json(busca);
+    res.json(row)
 
 })
 
