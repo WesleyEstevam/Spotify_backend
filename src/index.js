@@ -1,4 +1,5 @@
 const express = require('express'); 
+const cors = require('cors');
 const server = express();
 const port = 3001;
 
@@ -6,7 +7,7 @@ const { connect } = require('./conexaoDB/conect');
 
 //CONFIGURAÇÕES DO SERVIDOR
 server.use(express.json());
-
+server.use(cors());
 //ROTAS DISPONÍVEIS
 //========================== Listagem da playlists =========================== OK
 server.get('/playlists', async (req, res) => {
