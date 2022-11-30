@@ -3,21 +3,11 @@ async function connect(){
         return global.connection;
  
     const mysql = require("mysql2/promise");
-    const connection = await mysql.createConnection("mysql://root:123123@localhost:3306/spotify");//Alterar URL
+    const connection = await mysql.createConnection("mysql://root:so97719571@localhost:3306/Web");//Alterar URL
 
     console.log("Conectou no MySQL!");
     global.connection = connection;
     return connection;
 }
-
-connect()
-/*
-async function listaMusicas() {
-    const conn = connect; //CONEXÃO COM O MYSQL
-    const [row] = await conn.query('SELECT * FROM musicas;');
-    return row;
-}
-
-*/
 
 module.exports = {connect};

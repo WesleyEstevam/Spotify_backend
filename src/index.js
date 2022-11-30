@@ -124,7 +124,7 @@ server.get('/musicas', async (req, res) => {
     const conn = await connect(); //CONEXÃO COM O MYSQL
     const [row]  = await conn.query(`SELECT * FROM musicas WHERE nome='${pesquisa}';`);
 
-    res.json(row)
+    res.json(row.includes)
 
 })
 
