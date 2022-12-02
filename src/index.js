@@ -118,8 +118,22 @@ server.put('/usuarios/:id_usuario', async (req, res) => {
 
 //========================== Buscar músicas =========================== OK
 
-server.get('/musicas', async (req, res) => {
+server.get('/pesquisa', async (req, res) => {
     
+    //let pesquisa = req.query['nome'];
+    
+    const conn = await connect; //CONEXÃO COM O MYSQL
+    const [row]  = await conn.query(`SELECT * FROM musicas`);
+
+
+    res.json(row)
+
+})
+
+//========================== Buscar músicas =========================== OK
+
+server.get('/pesquisa/:query', async (req, res) => {
+    let query = req.params.query;
     let pesquisa = req.query['nome'];
     
     const conn = await connect; //CONEXÃO COM O MYSQL
