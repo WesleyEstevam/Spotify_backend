@@ -132,13 +132,11 @@ server.get('/pesquisa', async (req, res) => {
 
 //========================== Buscar músicas =========================== OK
 
-server.get('/pesquisa/:query', async (req, res) => {
-    let query = req.params.query;
+server.get('/filtro', async (req, res) => {
     let pesquisa = req.query['nome'];
     
-    const conn = await connect; //CONEXÃO COM O MYSQL
+    const conn   = await connect; //CONEXÃO COM O MYSQL
     const [row]  = await conn.query(`SELECT * FROM musicas WHERE nome LIKE '%${pesquisa}%';`);
-
 
     res.json(row)
 
