@@ -136,7 +136,9 @@ server.get('/filtro', async (req, res) => {
     let pesquisa = req.query['nome'];
     
     const conn   = await connect; //CONEXÃO COM O MYSQL
-    const [row]  = await conn.query(`SELECT * FROM musicas WHERE nome LIKE '%${pesquisa}%';`);
+    const [row]  = await conn.query(`SELECT distinct * FROM musicas WHERE nome LIKE '%${pesquisa}%';`);
+
+    console.log(row)
 
     res.json(row)
 
